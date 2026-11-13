@@ -1,0 +1,93 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "termx"
+version = "1.0.0"
+description = "AI-powered terminal assistant: describe a task, review the command, run it safely."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "TermX contributors" }]
+keywords = ["terminal", "ai", "ollama", "powershell", "pyside6", "desktop"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Win32 (MS Windows)",
+  "Environment :: X11 Applications :: Qt",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Terminals",
+  "Topic :: Utilities",
+  "Typing :: Typed",
+]
+dependencies = [
+  "PySide6>=6.8,<6.13",
+  "httpx>=0.27",
+  "pydantic>=2.6",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-qt>=4.4",
+  "ruff>=0.5",
+  "mypy>=1.9",
+]
+build = [
+  "pyinstaller>=6.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/pooria683/TermX"
+Issues = "https://github.com/pooria683/TermX/issues"
+Source = "https://github.com/pooria683/TermX"
+
+[project.scripts]
+termx = "termx.__main__:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["termx*"]
+
+[tool.setuptools.package-data]
+termx = ["../assets/fonts/*.ttf"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+  "gui: tests that construct Qt widgets (require a Qt platform plugin)",
+]
+
+[tool.ruff]
+line-length = 132
+target-version = "py312"
+exclude = ["build", "dist", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
+# N802/N803/N806: Qt's C++-style method names (paintEvent, sizeHint, ...) are
+# mandated by the framework. UP042: str-Enum mixins stay for serialisation
+# compatibility. N818: OllamaError/OllamaUnavailable read better than OError.
+ignore = ["N802", "N803", "N806", "UP042", "N818", "SIM105", "RUF012", "B017", "N817"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+"scripts/*" = ["E501"]
+# Long, unwrappable data literals: SVG path data, command patterns, prompts.
+"termx/ui/icons.py" = ["E501"]
+"termx/core/offline.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_ignores = false
+ignore_missing_imports = true
+files = ["termx"]
